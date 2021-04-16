@@ -119,9 +119,15 @@ mod tests {
     #[test]
     fn create_fail() {
         let result = NewTodo::create(String::default(), String::from("desc"));
-        assert!(matches!(result, Err(DomainError::NewTodoError)));
+        assert!(
+            matches!(result, Err(DomainError::NewTodoError)),
+            "Title should not be empty"
+        );
 
         let result = NewTodo::create(String::from("title"), String::default());
-        assert!(matches!(result, Err(DomainError::NewTodoError)))
+        assert!(
+            matches!(result, Err(DomainError::NewTodoError)),
+            "Description should not be empty"
+        )
     }
 }

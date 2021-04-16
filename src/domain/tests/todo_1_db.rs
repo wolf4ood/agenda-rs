@@ -15,12 +15,6 @@ async fn create_todo_ok() {
 
     todo::create_todo_ok(repo).await;
 }
-#[tokio::test]
-async fn create_todo_fail() {
-    let repo = create_repo("create_todo_fail");
-
-    todo::create_todo_fail(repo).await;
-}
 
 #[tokio::test]
 async fn delete_todo_ok() {

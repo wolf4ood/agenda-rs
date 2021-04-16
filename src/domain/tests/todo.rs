@@ -22,10 +22,6 @@ pub async fn create_todo_ok(repo: impl TodoRepo) {
     assert_eq!(todo.status(), input.status());
 }
 
-pub async fn create_todo_fail(repo: impl TodoRepo) {
-    repo.create(mock_todo()).await.unwrap_err();
-}
-
 pub async fn delete_todo_ok(repo: impl TodoRepo) {
     let input = mock_todo();
     let todo = repo
