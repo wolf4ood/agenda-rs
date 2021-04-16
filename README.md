@@ -17,11 +17,12 @@ This is a workshop using the following crates:
 
 ### Getting Started
 
-```
+```bash
 git clone https://github.com/wolf4ood/agenda-rs.git
 cd agenda-rs
 git checkout -p solutions
-docker-compose up -d // spins up PG
+# spins up PG
+docker-compose up -d 
 cargo test
 ```
 
