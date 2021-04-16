@@ -20,7 +20,7 @@ This is a workshop using the following crates:
 ```bash
 git clone https://github.com/wolf4ood/agenda-rs.git
 cd agenda-rs
-git checkout -p solutions
+git checkout -b solutions
 # spins up PG
 docker-compose up -d 
 cargo test
