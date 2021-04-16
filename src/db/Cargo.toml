@@ -1,0 +1,18 @@
+[package]
+name = "agenda-db"
+version = "0.1.0"
+authors = ["Enrico Risa <enrico.risa@prima.it>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+agenda-domain= { path="../domain"}
+diesel = { version = "1.4.4", features = ["postgres","r2d2","chrono","uuidv07"] }
+anyhow = "1"
+dotenv = "0.15.0"
+async-trait = "0.1.49"
+chrono = { version = "0.4" }
+diesel-derive-enum =  { version = "1.1.0", features = ["postgres"]}
+uuid = { version = "0.8", features = ["serde", "v4"] }
+diesel_migrations = "1.4.0"
