@@ -17,6 +17,7 @@ chrono = { version = "0.4" }
 derive_builder = "0.10.0"
 agenda-domain= { path="../domain"}
 agenda-db= { path="../db"}
+agenda-memory= { path="../memory"}
 tracing = "0.1"
 
 

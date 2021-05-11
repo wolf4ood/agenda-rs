@@ -4,6 +4,7 @@ use actix_web::{
     test, web, App,
 };
 use agenda_db::drop_and_create_db;
+use agenda_memory::TodoRepoInMemory;
 use agenda_web::{self, graphql, schema, ApplicationContext, PgPool, TodoRepoDiesel};
 use serde_json::{json, Value};
 use uuid::Uuid;
@@ -23,7 +24,7 @@ async fn integration_test_todo() {
         "integration_test_todo",
     );
     let pool = PgPool::new("postgres://agenda:agenda@localhost/integration_test_todo");
-    let todos = TodoRepoDiesel::new(pool);
+    let todos = TodoRepoInMemory::new();
     let ctx = ApplicationContext::new(todos);
 
     let mut app = test::init_service(

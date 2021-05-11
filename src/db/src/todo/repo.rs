@@ -30,7 +30,7 @@ impl TodoRepo for TodoRepoDiesel {
         todo!()
     }
 
-    async fn update(&self, _todo: &Todo) -> Result<(), DomainError> {
+    async fn update(&self, _todo: &Todo) -> Result<Todo, DomainError> {
         todo!()
     }
 }

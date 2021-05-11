@@ -4,6 +4,7 @@ use dotenv::dotenv;
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
     let db_url = std::env::var("DATABASE_URL").expect("env DATABASE_URL not found");
+
     tracing_subscriber::fmt::init();
 
     start_app(db_url.as_str()).await

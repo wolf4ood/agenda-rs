@@ -53,7 +53,7 @@ pub async fn change_status_ok(repo: impl TodoRepo) {
 
     assert_eq!(todo.title(), input.title());
 
-    assert_eq!(input.status(), &TodoStatus::Completed);
+    assert_eq!(todo.status(), &TodoStatus::Completed);
 }
 
 #[allow(dead_code)]
@@ -71,7 +71,7 @@ pub async fn change_status_fail(repo: impl TodoRepo) {
 
     assert_eq!(todo.title(), input.title());
 
-    assert_eq!(input.status(), &TodoStatus::Completed);
+    assert_eq!(todo.status(), &TodoStatus::Completed);
 
     let result = todo.change_status(TodoStatus::Completed, &repo).await;
 

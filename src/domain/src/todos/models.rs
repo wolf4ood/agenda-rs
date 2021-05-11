@@ -4,12 +4,16 @@ use crate::errors::DomainError;
 
 use super::TodoRepo;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Hash, Eq, Clone)]
 pub struct TodoId(Uuid);
 
 impl TodoId {
     pub fn generate() -> TodoId {
-        TodoId(Uuid::new_v4())
+        Uuid::new_v4().into()
+    }
+
+    pub fn take(self) -> Uuid {
+        self.0
     }
 }
 
@@ -19,12 +23,12 @@ impl From<Uuid> for TodoId {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Todo {
-    id: TodoId,
-    title: String,
-    description: String,
-    status: TodoStatus,
+    pub id: TodoId,
+    pub title: String,
+    pub description: String,
+    pub status: TodoStatus,
 }
 
 impl Todo {
@@ -49,18 +53,18 @@ impl Todo {
 
     pub async fn change_status(
         self,
-        _status: TodoStatus,
-        _repo: &impl TodoRepo,
+        status: TodoStatus,
+        repo: &impl TodoRepo,
     ) -> Result<Self, DomainError> {
-        todo!()
+        repo.update(&Todo { status, ..self }).await
     }
 
     pub async fn mark_completed(self, repo: &impl TodoRepo) -> Result<Self, DomainError> {
         self.change_status(TodoStatus::Completed, repo).await
     }
 
-    pub async fn delete(&self, _repo: &impl TodoRepo) -> Result<Option<Self>, DomainError> {
-        todo!()
+    pub async fn delete(&self, repo: &impl TodoRepo) -> Result<Option<Self>, DomainError> {
+        repo.delete(self.id()).await
     }
 }
 
@@ -81,6 +85,12 @@ impl NewTodo {
         description: String,
         status: TodoStatus,
     ) -> Result<NewTodo, DomainError> {
+        if title.is_empty() {
+            return Err(DomainError::NewTodoError);
+        }
+        if description.is_empty() {
+            return Err(DomainError::NewTodoError);
+        }
         Ok(NewTodo {
             title,
             description,

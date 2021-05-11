@@ -14,5 +14,5 @@ pub trait TodoRepo: Send + Sync {
 
     async fn delete(&self, id: &TodoId) -> Result<Option<Todo>, DomainError>;
 
-    async fn update(&self, todo: &Todo) -> Result<(), DomainError>;
+    async fn update(&self, todo: &Todo) -> Result<Todo, DomainError>;
 }

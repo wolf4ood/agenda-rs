@@ -1,3 +1,4 @@
+use agenda_domain::todos::NewTodo;
 use async_graphql::*;
 use uuid::Uuid;
 
@@ -27,11 +28,16 @@ impl Mutation {
     async fn create_todo(
         &self,
         ctx: &Context<'_>,
-        _title: String,
-        _description: String,
+        title: String,
+        description: String,
     ) -> Result<Todo> {
-        let _app_ctx = ctx.data::<ApplicationContext>()?;
-        todo!()
+        let app_ctx = ctx.data::<ApplicationContext>()?;
+
+        let todo = app_ctx
+            .todos()
+            .create(NewTodo::create(title, description)?)
+            .await?;
+        Ok(todo.into())
     }
 
     async fn delete_todo(&self, _todo_id: Uuid) -> Result<Todo> {
@@ -49,4 +55,15 @@ pub fn schema(ctx: ApplicationContext) -> AgendaSchema {
     Schema::build(Query, Mutation, EmptySubscription)
         .data(ctx)
         .finish()
+}
+
+impl From<agenda_domain::todos::Todo> for Todo {
+    fn from(todo: agenda_domain::todos::Todo) -> Self {
+        Todo {
+            id: todo.id.take(),
+            title: todo.title,
+            description: todo.description,
+            status: TodoStatus::Active,
+        }
+    }
 }
