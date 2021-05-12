@@ -2,7 +2,6 @@ use actix_web::{guard, middleware::Logger, web, App, HttpResponse, HttpServer};
 use agenda_strucsty::TodoRepoStrucsty;
 use async_graphql::{Request, Variables};
 use schema::AgendaSchema;
-use tracing_actix_web::TracingLogger;
 mod context;
 mod error;
 mod rest;
@@ -14,8 +13,7 @@ pub use context::ApplicationContext;
 pub use schema::schema;
 use serde::Deserialize;
 pub async fn start_graphql_app() -> std::io::Result<()> {
-    utils::install_telemetry("graphql_service").unwrap();
-
+    env_logger::init();
     let client = reqwest::Client::new();
     let schema = schema(client);
 
@@ -23,7 +21,6 @@ pub async fn start_graphql_app() -> std::io::Result<()> {
         App::new()
             .data(schema.clone())
             .wrap(Logger::default())
-            .wrap(TracingLogger::default())
             .service(web::resource("/graphql").guard(guard::Post()).to(graphql))
     })
     .bind("127.0.0.1:8082")?
@@ -50,7 +47,7 @@ pub async fn graphql(
 }
 
 pub async fn start_rest_app(db_url: &str) -> std::io::Result<()> {
-    utils::install_telemetry("rest_service").unwrap();
+    env_logger::init();
     let todos = TodoRepoStrucsty::open(db_url);
     let ctx = ApplicationContext::new(todos);
 
@@ -58,7 +55,6 @@ pub async fn start_rest_app(db_url: &str) -> std::io::Result<()> {
         App::new()
             .data(ctx.clone())
             .wrap(Logger::default())
-            .wrap(TracingLogger::default())
             .service(
                 web::scope("todos")
                     .service(rest::show_todos)

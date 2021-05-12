@@ -17,7 +17,6 @@ impl Query {
         let client = ctx.data_unchecked::<Client>();
         let response: Vec<Todo> = client
             .get("http://localhost:8081/todos")
-            .headers(crate::utils::tracing_headers())
             .send()
             .await
             .unwrap()
@@ -47,7 +46,6 @@ impl Mutation {
         let client = ctx.data_unchecked::<Client>();
         let response: Todo = client
             .post("http://localhost:8081/todos")
-            .headers(crate::utils::tracing_headers())
             .json(&NewTodoData { title, description })
             .send()
             .await
