@@ -1,11 +1,7 @@
-use agenda_domain::todos::NewTodo;
+use crate::types::{Todo, TodoStatus};
 use async_graphql::*;
+use serde::Serialize;
 use uuid::Uuid;
-
-use crate::{
-    context::ApplicationContext,
-    types::{Todo, TodoStatus},
-};
 
 pub struct Query;
 
@@ -22,22 +18,27 @@ impl Query {
 
 pub struct Mutation;
 
+#[derive(Serialize)]
+pub struct NewTodoData {
+    title: String,
+    description: String,
+}
 #[Object]
 impl Mutation {
-    #[tracing::instrument(skip(self, ctx))]
-    async fn create_todo(
-        &self,
-        ctx: &Context<'_>,
-        title: String,
-        description: String,
-    ) -> Result<Todo> {
-        let app_ctx = ctx.data::<ApplicationContext>()?;
+    #[tracing::instrument(skip(self))]
+    async fn create_todo(&self, title: String, description: String) -> Result<Todo> {
+        let client = reqwest::Client::new();
+        let response: Todo = client
+            .post("http://localhost:8081/todos")
+            .json(&NewTodoData { title, description })
+            .send()
+            .await
+            .unwrap()
+            .json()
+            .await
+            .unwrap();
 
-        let todo = app_ctx
-            .todos()
-            .create(NewTodo::create(title, description)?)
-            .await?;
-        Ok(todo.into())
+        Ok(response)
     }
 
     async fn delete_todo(&self, _todo_id: Uuid) -> Result<Todo> {
@@ -51,10 +52,8 @@ impl Mutation {
 
 pub type AgendaSchema = Schema<Query, Mutation, EmptySubscription>;
 
-pub fn schema(ctx: ApplicationContext) -> AgendaSchema {
-    Schema::build(Query, Mutation, EmptySubscription)
-        .data(ctx)
-        .finish()
+pub fn schema() -> AgendaSchema {
+    Schema::build(Query, Mutation, EmptySubscription).finish()
 }
 
 impl From<agenda_domain::todos::Todo> for Todo {

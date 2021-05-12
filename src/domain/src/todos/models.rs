@@ -23,6 +23,12 @@ impl From<Uuid> for TodoId {
     }
 }
 
+impl ToString for TodoId {
+    fn to_string(&self) -> String {
+        self.0.to_string()
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Todo {
     pub id: TodoId,

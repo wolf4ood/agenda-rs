@@ -3,7 +3,7 @@ use dotenv::dotenv;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
-    let db_url = std::env::var("DATABASE_URL").expect("env DATABASE_URL not found");
+    let db_url = std::env::var("STRUCTSY_URL").expect("env STRUCTSY_URL not found");
 
     tracing_subscriber::fmt::init();
 
