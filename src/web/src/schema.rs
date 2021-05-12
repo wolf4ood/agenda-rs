@@ -9,8 +9,18 @@ pub struct Query;
 
 #[Object]
 impl Query {
-    async fn todo(&self, _todo_id: Uuid) -> Result<Todo> {
-        todo!()
+    async fn todo(&self, ctx: &Context<'_>, todo_id: Uuid) -> Result<Todo> {
+        let client = ctx.data_unchecked::<Client>();
+        let response: Todo = client
+            .get(format!("http://localhost:8081/todos/{}", todo_id))
+            .send()
+            .await
+            .unwrap()
+            .json()
+            .await
+            .unwrap();
+
+        Ok(response)
     }
 
     async fn todos(&self, ctx: &Context<'_>) -> Result<Vec<Todo>> {
