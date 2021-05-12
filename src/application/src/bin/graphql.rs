@@ -1,4 +1,4 @@
-use agenda_web::start_app;
+use agenda_web::start_graphql_app;
 use dotenv::dotenv;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -7,5 +7,5 @@ async fn main() -> std::io::Result<()> {
 
     tracing_subscriber::fmt::init();
 
-    start_app(db_url.as_str()).await
+    start_graphql_app(db_url.as_str()).await
 }

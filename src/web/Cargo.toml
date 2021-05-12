@@ -18,6 +18,7 @@ derive_builder = "0.10.0"
 agenda-domain= { path="../domain"}
 agenda-db= { path="../db"}
 agenda-memory= { path="../memory"}
+agenda-strucsty= { path="../strucsty"}
 tracing = "0.1"
 
 

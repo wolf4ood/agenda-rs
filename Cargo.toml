@@ -2,6 +2,7 @@
 members = [
     "src/db",
     "src/memory",
+    "src/strucsty",
     "src/domain",
     "src/web",
     "src/application"

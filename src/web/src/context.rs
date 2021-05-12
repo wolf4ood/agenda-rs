@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use agenda_domain::todos::TodoRepo;
 
+#[derive(Clone)]
 pub struct ApplicationContext {
     todos: Arc<dyn TodoRepo>,
 }
