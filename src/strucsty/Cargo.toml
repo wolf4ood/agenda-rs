@@ -7,11 +7,10 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-
 agenda-domain= { path="../domain"}
 async-trait = "0.1.49"
 structsy = "0.3.0"
 structsy-derive = "0.3.0"
 uuid="0.8"
-
+tracing="0.1"
 chrono = { version = "0.4" }

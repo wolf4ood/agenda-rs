@@ -3,6 +3,8 @@ use async_graphql::*;
 use serde::Serialize;
 use uuid::Uuid;
 
+use reqwest::Client;
+
 pub struct Query;
 
 #[Object]
@@ -11,8 +13,19 @@ impl Query {
         todo!()
     }
 
-    async fn todos(&self) -> Result<Vec<Todo>> {
-        todo!()
+    async fn todos(&self, ctx: &Context<'_>) -> Result<Vec<Todo>> {
+        let client = ctx.data_unchecked::<Client>();
+        let response: Vec<Todo> = client
+            .get("http://localhost:8081/todos")
+            .headers(crate::utils::tracing_headers())
+            .send()
+            .await
+            .unwrap()
+            .json()
+            .await
+            .unwrap();
+
+        Ok(response)
     }
 }
 
@@ -25,11 +38,16 @@ pub struct NewTodoData {
 }
 #[Object]
 impl Mutation {
-    #[tracing::instrument(skip(self))]
-    async fn create_todo(&self, title: String, description: String) -> Result<Todo> {
-        let client = reqwest::Client::new();
+    async fn create_todo(
+        &self,
+        ctx: &Context<'_>,
+        title: String,
+        description: String,
+    ) -> Result<Todo> {
+        let client = ctx.data_unchecked::<Client>();
         let response: Todo = client
             .post("http://localhost:8081/todos")
+            .headers(crate::utils::tracing_headers())
             .json(&NewTodoData { title, description })
             .send()
             .await
@@ -52,8 +70,10 @@ impl Mutation {
 
 pub type AgendaSchema = Schema<Query, Mutation, EmptySubscription>;
 
-pub fn schema() -> AgendaSchema {
-    Schema::build(Query, Mutation, EmptySubscription).finish()
+pub fn schema(client: reqwest::Client) -> AgendaSchema {
+    Schema::build(Query, Mutation, EmptySubscription)
+        .data(client)
+        .finish()
 }
 
 impl From<agenda_domain::todos::Todo> for Todo {

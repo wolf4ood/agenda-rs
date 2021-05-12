@@ -4,7 +4,5 @@ use dotenv::dotenv;
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
 
-    tracing_subscriber::fmt::init();
-
     start_graphql_app().await
 }

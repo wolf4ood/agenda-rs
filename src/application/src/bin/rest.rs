@@ -5,7 +5,5 @@ async fn main() -> std::io::Result<()> {
     dotenv().ok();
     let db_url = std::env::var("STRUCTSY_URL").expect("env STRUCTSY_URL not found");
 
-    tracing_subscriber::fmt::init();
-
     start_rest_app(db_url.as_str()).await
 }
