@@ -1,50 +1,16 @@
-use actix_web::{guard, middleware::Logger, web, App, HttpResponse, HttpServer};
+use actix_web::{middleware::Logger, web, App, HttpServer};
 use agenda_strucsty::TodoRepoStrucsty;
-use async_graphql::{Request, Variables};
-use schema::AgendaSchema;
 mod context;
 mod error;
+mod proxy;
 mod rest;
 mod schema;
 mod types;
 pub mod utils;
 pub use agenda_db::{PgPool, TodoRepoDiesel};
 pub use context::ApplicationContext;
+pub use proxy::start_graphql_app;
 pub use schema::schema;
-use serde::Deserialize;
-pub async fn start_graphql_app() -> std::io::Result<()> {
-    env_logger::init();
-    let client = reqwest::Client::new();
-    let schema = schema(client);
-
-    HttpServer::new(move || {
-        App::new()
-            .data(schema.clone())
-            .wrap(Logger::default())
-            .service(web::resource("/graphql").guard(guard::Post()).to(graphql))
-    })
-    .bind("127.0.0.1:8082")?
-    .workers(20)
-    .run()
-    .await
-}
-#[derive(Deserialize)]
-pub struct GraphQLQuery {
-    query: String,
-    variables: Variables,
-}
-pub async fn graphql(
-    schema: web::Data<AgendaSchema>,
-    query: web::Json<GraphQLQuery>,
-) -> HttpResponse {
-    let req = Request::new(query.query.clone()).variables(query.variables.clone());
-
-    let res = schema.execute(req).await;
-
-    HttpResponse::Ok()
-        .content_type("application/json")
-        .json(res)
-}
 
 pub async fn start_rest_app(db_url: &str) -> std::io::Result<()> {
     env_logger::init();

@@ -15,6 +15,7 @@ pub async fn create_todo(
     data: web::Json<NewTodoWeb>,
     ctx: web::Data<ApplicationContext>,
 ) -> Result<HttpResponse, MyError> {
+    log::info!("Creating todo {:?}", &data);
     let todo = NewTodo::create(data.title.clone(), data.description.clone())
         .context("Failed to create todo")?;
     let created = ctx
@@ -42,7 +43,7 @@ pub async fn todo_details(
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct NewTodoWeb {
     title: String,
     description: String,

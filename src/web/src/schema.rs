@@ -14,11 +14,9 @@ impl Query {
         let response: Todo = client
             .get(format!("http://localhost:8081/todos/{}", todo_id))
             .send()
-            .await
-            .unwrap()
+            .await?
             .json()
-            .await
-            .unwrap();
+            .await?;
 
         Ok(response)
     }
@@ -28,11 +26,9 @@ impl Query {
         let response: Vec<Todo> = client
             .get("http://localhost:8081/todos")
             .send()
-            .await
-            .unwrap()
+            .await?
             .json()
-            .await
-            .unwrap();
+            .await?;
 
         Ok(response)
     }
@@ -58,11 +54,9 @@ impl Mutation {
             .post("http://localhost:8081/todos")
             .json(&NewTodoData { title, description })
             .send()
-            .await
-            .unwrap()
+            .await?
             .json()
-            .await
-            .unwrap();
+            .await?;
 
         Ok(response)
     }
